@@ -1,1 +1,6 @@
-return { "nvim-java/nvim-java" }
+return {
+  "nvim-java/nvim-java",
+  dependencies = {
+    "nvim-java/nvim-java-core",
+  },
+}
