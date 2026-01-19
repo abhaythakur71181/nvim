@@ -5,40 +5,49 @@ return {
     "hrsh7th/cmp-nvim-lsp",
   },
   config = function()
-    local lspconfig = require("lspconfig")
-    local lspui = require("lspconfig.ui.windows")
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
+    local java21 = "/opt/homebrew/Cellar/openjdk@21/21.0.9/libexec/openjdk.jdk/Contents/Home"
+
+    -- Define diagnostic signs
     local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
     for type, icon in pairs(signs) do
       local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+      vim.fn.sign_define(hl, { text = icon, highlight = hl, numhl = "" })
     end
 
-    --LspInfo Borders
-    lspui.default_options.border = "double"
+    -- Configure and enable LSP servers
 
-    -- Managing language servers individually
-    -- pyright
-    lspconfig.pyright.setup({
+    -- Pyright (Python)
+    vim.lsp.config("pyright", {
       capabilities = capabilities,
     })
-    -- ts_ls
-    lspconfig.ts_ls.setup({
+    vim.lsp.enable("pyright")
+
+    -- TypeScript / JavaScript
+    vim.lsp.config("tsserver", {
       capabilities = capabilities,
     })
-    -- rust_analyzer
-    lspconfig.rust_analyzer.setup({
+    vim.lsp.enable("tsserver")
+
+    -- Rust
+    vim.lsp.config("rust_analyzer", {
       capabilities = capabilities,
-      -- Server-specific settings. See `:help lspconfig-setup`
       filetypes = { "rust" },
       settings = {
         ["rust-analyzer"] = {},
       },
     })
-    -- Java LS
-    lspconfig.jdtls.setup({
+    vim.lsp.enable("rust_analyzer")
+
+    -- Java (jdtls)
+    vim.lsp.config("jdtls", {
+      cmd = {
+        vim.fn.stdpath("data") .. "/mason/bin/jdtls",
+        "--java-executable",
+        java21 .. "/bin/java",
+      },
       capabilities = capabilities,
       filetypes = { "java" },
       settings = {
@@ -47,7 +56,7 @@ return {
             runtimes = {
               {
                 name = "JavaSE-21",
-                path = "/Users/abhaythakur/Library/Java/JavaVirtualMachines/openjdk-23.0.1",
+                path = java21,
                 default = true,
               },
             },
@@ -55,25 +64,30 @@ return {
         },
       },
     })
+    vim.lsp.enable("jdtls")
 
-    -- html
-    lspconfig.html.setup({
+    -- HTML
+    vim.lsp.config("html", {
       capabilities = capabilities,
     })
-    -- configure emmet language server
-    lspconfig.emmet_ls.setup({
+    vim.lsp.enable("html")
+
+    -- Emmet
+    vim.lsp.config("emmet_ls", {
       capabilities = capabilities,
       filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
     })
+    vim.lsp.enable("emmet_ls")
 
-    -- configure nix language server
-    lspconfig.nil_ls.setup({
+    -- Nix
+    vim.lsp.config("nil_ls", {
       capabilities = capabilities,
       filetypes = { "nix" },
     })
+    vim.lsp.enable("nil_ls")
 
-    -- Lua LS
-    lspconfig.lua_ls.setup({
+    -- Lua
+    vim.lsp.config("lua_ls", {
       capabilities = capabilities,
       settings = {
         Lua = {
@@ -83,21 +97,24 @@ return {
         },
       },
     })
+    vim.lsp.enable("lua_ls")
 
-    -- CSS LS
-    lspconfig.cssls.setup({
+    -- CSS
+    vim.lsp.config("cssls", {
       capabilities = capabilities,
     })
+    vim.lsp.enable("cssls")
 
-    -- Tailwind
-    -- Support for tailwind auto completion
-    -- install the tailwind server : "sudo npm install -g @tailwindcss/language-server"
-    lspconfig.tailwindcss.setup({
+    -- Tailwind CSS
+    vim.lsp.config("tailwindcss", {
       capabilities = capabilities,
     })
+    vim.lsp.enable("tailwindcss")
 
-    lspconfig.bashls.setup({
+    -- Bash
+    vim.lsp.config("bashls", {
       capabilities = capabilities,
     })
+    vim.lsp.enable("bashls")
   end,
 }
